@@ -13,8 +13,8 @@ class LevelEditorScreen extends ConsumerStatefulWidget {
 
 class _LevelEditorScreenState extends ConsumerState<LevelEditorScreen> {
   late List<List<TileType>> _grid;
-  final int _rows = 8;
-  final int _cols = 8;
+  int _rows = 8;
+  int _cols = 8;
 
   @override
   void initState() {
@@ -24,6 +24,36 @@ class _LevelEditorScreenState extends ConsumerState<LevelEditorScreen> {
     // Default start and end
     _grid[0][0] = TileType.start;
     _grid[7][7] = TileType.station;
+  }
+
+  void _updateSize(int newSize) {
+    setState(() {
+      final oldGrid = _grid;
+      final oldRows = _rows;
+      final oldCols = _cols;
+      
+      _rows = newSize;
+      _cols = newSize;
+      _grid = List.generate(_rows, (_) => List.filled(_cols, TileType.empty));
+
+      for (var r = 0; r < _rows && r < oldRows; r++) {
+        for (var c = 0; c < _cols && c < oldCols; c++) {
+          _grid[r][c] = oldGrid[r][c];
+        }
+      }
+
+      bool hasStart = false;
+      bool hasStation = false;
+      for (var r = 0; r < _rows; r++) {
+        for (var c = 0; c < _cols; c++) {
+          if (_grid[r][c] == TileType.start) hasStart = true;
+          if (_grid[r][c] == TileType.station) hasStation = true;
+        }
+      }
+      
+      if (!hasStart) _grid[0][0] = TileType.start;
+      if (!hasStation) _grid[_rows - 1][_cols - 1] = TileType.station;
+    });
   }
 
   void _setTile(int r, int c, TileType next) {
@@ -99,7 +129,25 @@ class _LevelEditorScreenState extends ConsumerState<LevelEditorScreen> {
       body: Column(
         children: [
             Padding(
-                padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text('Map Size: ', style: TextStyle(fontSize: 16)),
+                  IconButton(
+                    icon: const Icon(Icons.remove_circle_outline),
+                    onPressed: _rows > 3 ? () => _updateSize(_rows - 1) : null,
+                  ),
+                  Text('$_rows x $_cols', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                  IconButton(
+                    icon: const Icon(Icons.add_circle_outline),
+                    onPressed: _rows < 8 ? () => _updateSize(_rows + 1) : null,
+                  ),
+                ],
+              ),
+            ),
+            const Padding(
+                padding: EdgeInsets.all(8.0),
                 child: Text("Drag tiles below onto map, tap map tiles to remove"),
             ),
             Expanded(

@@ -6,8 +6,7 @@ import '../widgets/process_flow.dart';
 import '../widgets/game_controls.dart';
 import '../providers/game_provider.dart';
 import '../models/game_state.dart';
-import '../screens/customization_screen.dart';
-import '../screens/level_editor_screen.dart';
+
 
 class GameScreen extends ConsumerWidget {
   const GameScreen({super.key});
@@ -27,49 +26,68 @@ class GameScreen extends ConsumerWidget {
         title: const Text('Steam Code Train'),
         centerTitle: true,
         backgroundColor: Colors.blueAccent,
-        actions: [
-          IconButton(
-             icon: const Icon(Icons.build),
-             tooltip: "Level Editor",
-             onPressed: () {
-               Navigator.of(context).push(
-                 MaterialPageRoute(builder: (context) => const LevelEditorScreen()),
-               );
-             },
-          ),
-          IconButton(
-             icon: const Icon(Icons.palette),
-             tooltip: "Customize Train",
-             onPressed: () {
-               Navigator.of(context).push(
-                 MaterialPageRoute(builder: (context) => const CustomizationScreen()),
-               );
-             },
-          )
-        ],
+
       ),
       body: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              flex: 3,
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Center(child: GameBoard()),
-              ),
-            ),
-            const Divider(height: 1),
-            const Expanded(
-              flex: 1,
-              child: CommandPalette(),
-            ),
-            const Divider(height: 1),
-            const SizedBox(
-              height: 120,
-              child: ProcessFlow(),
-            ),
-            const GameControls(),
-          ],
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final isLandscape = constraints.maxWidth > constraints.maxHeight;
+
+            if (isLandscape) {
+              return Row(
+                children: [
+                  Expanded(
+                    flex: 1,
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Center(child: GameBoard()),
+                    ),
+                  ),
+                  const VerticalDivider(width: 1),
+                  Expanded(
+                    flex: 1,
+                    child: Column(
+                      children: [
+                        const Expanded(
+                          flex: 1,
+                          child: CommandPalette(),
+                        ),
+                        const Divider(height: 1),
+                        const SizedBox(
+                          height: 120,
+                          child: ProcessFlow(),
+                        ),
+                        const GameControls(),
+                      ],
+                    ),
+                  ),
+                ],
+              );
+            }
+
+            return Column(
+              children: [
+                Expanded(
+                  flex: 3,
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Center(child: GameBoard()),
+                  ),
+                ),
+                const Divider(height: 1),
+                const Expanded(
+                  flex: 1,
+                  child: CommandPalette(),
+                ),
+                const Divider(height: 1),
+                const SizedBox(
+                  height: 120,
+                  child: ProcessFlow(),
+                ),
+                const GameControls(),
+              ],
+            );
+          },
         ),
       ),
     );

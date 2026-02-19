@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../models/command.dart';
 import '../providers/game_provider.dart';
+import '../providers/train_color_provider.dart';
 
 class TrainWidget extends ConsumerWidget {
   final double tileSize;
@@ -12,7 +12,7 @@ class TrainWidget extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final gameState = ref.watch(gameProvider);
     final (row, col) = gameState.trainPosition;
-    final direction = gameState.trainDirection;
+    final trainColor = ref.watch(trainColorProvider);
 
     return AnimatedPositioned(
       duration: const Duration(milliseconds: 400),
@@ -21,18 +21,13 @@ class TrainWidget extends ConsumerWidget {
       left: col * tileSize,
       width: tileSize,
       height: tileSize,
-      child: TweenAnimationBuilder<double>(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-        tween: Tween(end: _getRotation(direction)),
-        builder: (context, angle, child) {
-          return Transform.rotate(
-            angle: angle,
-            child: child,
-          );
-        },
-        child: Container(
-          padding: const EdgeInsets.all(4),
+      child: Container(
+        padding: const EdgeInsets.all(4),
+        child: ColorFiltered(
+          colorFilter: ColorFilter.mode(
+            trainColor,
+            BlendMode.modulate,
+          ),
           child: Image.asset(
             'assets/images/bear_train.png',
             fit: BoxFit.contain,
@@ -40,18 +35,5 @@ class TrainWidget extends ConsumerWidget {
         ),
       ),
     );
-  }
-
-  double _getRotation(Direction direction) {
-    switch (direction) {
-      case Direction.east:
-        return 0;
-      case Direction.south:
-        return 1.5708; // 90 degrees in radians
-      case Direction.west:
-        return 3.14159; // 180 degrees
-      case Direction.north:
-        return 4.71239; // 270 degrees
-    }
   }
 }

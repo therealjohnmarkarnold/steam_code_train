@@ -28,10 +28,17 @@ class CustomizationScreen extends ConsumerWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.train,
-              size: 100,
-              color: currentColor,
+            ColorFiltered(
+              colorFilter: ColorFilter.mode(
+                currentColor,
+                BlendMode.modulate,
+              ),
+              child: Image.asset(
+                'assets/images/bear_train.png',
+                width: 100,
+                height: 100,
+                fit: BoxFit.contain,
+              ),
             ),
             const SizedBox(height: 40),
             const Text(
