@@ -4,6 +4,7 @@ import '../models/command.dart';
 import '../models/game_state.dart';
 import '../models/level.dart';
 import '../data/levels.dart';
+import 'completed_levels_provider.dart';
 
 class GameNotifier extends Notifier<GameState> {
   
@@ -148,6 +149,10 @@ class GameNotifier extends Notifier<GameState> {
       final (r, c) = state.trainPosition;
       if (state.level.grid[r][c] == TileType.station) {
           state = state.copyWith(status: GameStatus.levelComplete);
+          // Only trigger for preset levels (id > 0)
+          if (state.level.id > 0) {
+              ref.read(completedLevelsProvider.notifier).markComplete(state.level.id);
+          }
       }
   }
 }
