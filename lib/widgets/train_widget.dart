@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/command.dart';
 import '../providers/game_provider.dart';
-import '../providers/train_color_provider.dart';
 
 class TrainWidget extends ConsumerWidget {
   final double tileSize;
@@ -14,7 +13,6 @@ class TrainWidget extends ConsumerWidget {
     final gameState = ref.watch(gameProvider);
     final (row, col) = gameState.trainPosition;
     final direction = gameState.trainDirection;
-    final trainColor = ref.watch(trainColorProvider);
 
     return AnimatedPositioned(
       duration: const Duration(milliseconds: 400),
@@ -35,11 +33,9 @@ class TrainWidget extends ConsumerWidget {
         },
         child: Container(
           padding: const EdgeInsets.all(4),
-          child: FittedBox(
-            child: Icon(
-              Icons.train,
-              color: trainColor,
-            ),
+          child: Image.asset(
+            'assets/images/bear_train.png',
+            fit: BoxFit.contain,
           ),
         ),
       ),

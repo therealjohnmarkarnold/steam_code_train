@@ -26,25 +26,8 @@ class _LevelEditorScreenState extends ConsumerState<LevelEditorScreen> {
     _grid[7][7] = TileType.station;
   }
 
-  void _cycleTile(int r, int c) {
+  void _setTile(int r, int c, TileType next) {
     setState(() {
-      final current = _grid[r][c];
-      TileType next;
-      switch (current) {
-        case TileType.empty:
-          next = TileType.obstacle;
-          break;
-        case TileType.obstacle:
-          next = TileType.start;
-          break;
-        case TileType.start:
-          next = TileType.station;
-          break;
-        case TileType.station:
-          next = TileType.empty;
-          break;
-      }
-      
       // Validation: Ensure only one Start and one Station
       if (next == TileType.start) {
         // Clear other starts
@@ -117,7 +100,7 @@ class _LevelEditorScreenState extends ConsumerState<LevelEditorScreen> {
         children: [
             Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Text("Tap tiles to cycle: Empty -> Obstacle -> Start -> Station"),
+                child: Text("Drag tiles below onto map, tap map tiles to remove"),
             ),
             Expanded(
                 child: GridView.builder(
@@ -128,18 +111,57 @@ class _LevelEditorScreenState extends ConsumerState<LevelEditorScreen> {
                     itemBuilder: (context, index) {
                         final r = index ~/ _cols;
                         final c = index % _cols;
-                        return GestureDetector(
-                            onTap: () => _cycleTile(r, c),
-                            child: GridTileWidget(
-                                type: _grid[r][c],
-                                row: r,
-                                col: c,
-                            ),
+                        return DragTarget<TileType>(
+                            onAcceptWithDetails: (details) {
+                                _setTile(r, c, details.data);
+                            },
+                            builder: (context, candidateData, rejectedData) {
+                                return GestureDetector(
+                                    onTap: () => _setTile(r, c, TileType.empty),
+                                    child: GridTileWidget(
+                                        type: _grid[r][c],
+                                        row: r,
+                                        col: c,
+                                    ),
+                                );
+                            },
                         );
                     },
                 ),
             ),
+            const Divider(height: 1),
+            Container(
+                height: 80,
+                color: Colors.grey[200],
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                        _buildDraggableTile(TileType.obstacle),
+                        _buildDraggableTile(TileType.start),
+                        _buildDraggableTile(TileType.station),
+                    ],
+                ),
+            ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildDraggableTile(TileType type) {
+    return Draggable<TileType>(
+      data: type,
+      feedback: Material(
+        color: Colors.transparent,
+        child: SizedBox(
+          width: 50,
+          height: 50,
+          child: GridTileWidget(type: type, row: 0, col: 0),
+        ),
+      ),
+      child: SizedBox(
+        width: 60,
+        height: 60,
+        child: GridTileWidget(type: type, row: 0, col: 0),
       ),
     );
   }

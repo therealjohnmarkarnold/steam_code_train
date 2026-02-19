@@ -91,14 +91,21 @@ class GameNotifier extends Notifier<GameState> {
 
   void _executeCommand(Command command) {
     switch (command.type) {
-      case CommandType.moveForward:
+      case CommandType.moveUp:
+        state = state.copyWith(trainDirection: Direction.north);
         _moveForward();
         break;
-      case CommandType.turnLeft:
-        state = state.copyWith(trainDirection: state.trainDirection.turnLeft);
+      case CommandType.moveDown:
+        state = state.copyWith(trainDirection: Direction.south);
+        _moveForward();
         break;
-      case CommandType.turnRight:
-        state = state.copyWith(trainDirection: state.trainDirection.turnRight);
+      case CommandType.moveLeft:
+        state = state.copyWith(trainDirection: Direction.west);
+        _moveForward();
+        break;
+      case CommandType.moveRight:
+        state = state.copyWith(trainDirection: Direction.east);
+        _moveForward();
         break;
     }
   }

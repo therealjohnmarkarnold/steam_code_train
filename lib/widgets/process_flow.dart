@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/command.dart';
-import '../models/game_state.dart';
 import '../providers/game_provider.dart';
 
 class ProcessFlow extends ConsumerWidget {
@@ -21,8 +20,8 @@ class ProcessFlow extends ConsumerWidget {
         children: [
           Expanded(
             child: DragTarget<Command>(
-              onAccept: (command) {
-                ref.read(gameProvider.notifier).addCommand(command);
+              onAcceptWithDetails: (details) {
+                ref.read(gameProvider.notifier).addCommand(details.data);
               },
               builder: (context, candidateData, rejectedData) {
                 return ListView.builder(
@@ -35,7 +34,7 @@ class ProcessFlow extends ConsumerWidget {
                          width: 60,
                          margin: const EdgeInsets.all(4),
                          decoration: BoxDecoration(
-                           color: candidateData.isNotEmpty ? Colors.blue.withOpacity(0.3) : Colors.transparent,
+                           color: candidateData.isNotEmpty ? Colors.blue.withValues(alpha: 0.3) : Colors.transparent,
                            borderRadius: BorderRadius.circular(8),
                            border: Border.all(color: Colors.grey[300]!, width: 2, style: BorderStyle.solid),
                          ),

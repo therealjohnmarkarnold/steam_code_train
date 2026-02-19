@@ -47,9 +47,10 @@ enum Direction {
 }
 
 enum CommandType {
-  moveForward,
-  turnLeft,
-  turnRight,
+  moveUp,
+  moveDown,
+  moveLeft,
+  moveRight,
 }
 
 class Command {
@@ -65,24 +66,31 @@ class Command {
     required this.label,
   });
 
-  static const moveForward = Command(
-    id: 'move_forward',
-    type: CommandType.moveForward,
+  static const moveUp = Command(
+    id: 'move_up',
+    type: CommandType.moveUp,
     icon: Icons.arrow_upward,
-    label: 'Forward',
+    label: 'Up',
   );
 
-  static const turnLeft = Command(
-    id: 'turn_left',
-    type: CommandType.turnLeft,
-    icon: Icons.turn_left,
+  static const moveDown = Command(
+    id: 'move_down',
+    type: CommandType.moveDown,
+    icon: Icons.arrow_downward,
+    label: 'Down',
+  );
+
+  static const moveLeft = Command(
+    id: 'move_left',
+    type: CommandType.moveLeft,
+    icon: Icons.arrow_back,
     label: 'Left',
   );
 
-  static const turnRight = Command(
-    id: 'turn_right',
-    type: CommandType.turnRight,
-    icon: Icons.turn_right,
+  static const moveRight = Command(
+    id: 'move_right',
+    type: CommandType.moveRight,
+    icon: Icons.arrow_forward,
     label: 'Right',
   );
 }

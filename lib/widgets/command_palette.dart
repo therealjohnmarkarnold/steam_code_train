@@ -1,34 +1,40 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/command.dart';
+import '../providers/game_provider.dart';
 
-class CommandPalette extends StatelessWidget {
+class CommandPalette extends ConsumerWidget {
   const CommandPalette({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 10),
       color: Colors.grey[200],
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          _buildDraggableCommand(Command.moveForward),
-          _buildDraggableCommand(Command.turnLeft),
-          _buildDraggableCommand(Command.turnRight),
+          _buildDraggableCommand(Command.moveUp, ref),
+          _buildDraggableCommand(Command.moveDown, ref),
+          _buildDraggableCommand(Command.moveLeft, ref),
+          _buildDraggableCommand(Command.moveRight, ref),
         ],
       ),
     );
   }
 
-  Widget _buildDraggableCommand(Command command) {
-    return Draggable<Command>(
-      data: command,
-      feedback: Material(
-        color: Colors.transparent,
-        child: _buildCommandIcon(command, isDragging: true),
+  Widget _buildDraggableCommand(Command command, WidgetRef ref) {
+    return GestureDetector(
+      onTap: () => ref.read(gameProvider.notifier).addCommand(command),
+      child: Draggable<Command>(
+        data: command,
+        feedback: Material(
+          color: Colors.transparent,
+          child: _buildCommandIcon(command, isDragging: true),
+        ),
+        childWhenDragging: _buildCommandIcon(command, isPlaceholder: true),
+        child: _buildCommandIcon(command),
       ),
-      childWhenDragging: _buildCommandIcon(command, isPlaceholder: true),
-      child: _buildCommandIcon(command),
     );
   }
 
